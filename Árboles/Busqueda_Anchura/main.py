@@ -29,13 +29,14 @@ def lee_matriz():
     """
     n = int(input("Ingrese el número de vértices del grafo: "))
     M = [[0] * n for i in range(n)]
-    triángulo = [[0] * n for i in range(n)]
     for i in range(n):
         for j in range(n):
             if i >= j:
-                triángulo[i][j] = int(input("Ingrese la entrada [{0}][{1}]: ".format(str(i+1),str(j+1))))
-    print(triángulo)
+                M[i][j] = int(input("Ingrese la entrada [{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                if i > j:
+                    M[j][i] = M[i][j]
     return M
+
 
 def dibuja_matriz(M):
     """
@@ -49,10 +50,11 @@ def dibuja_matriz(M):
             print('{:^3n}'.format(M[i][j]), end='')
         print(']')
 
+
 def elimina_bucles(M):
     for i in range(M):
         for j in range(M[i]):
-            if i==j:
+            if i == j:
                 M[i][j] = 0
     return M
 
