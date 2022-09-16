@@ -16,10 +16,14 @@ class Vértice:
     """
     conteo = 0
 
-    def __init__(self, vecinos, conectado=False):
+    def __init__(self, id: int, vecinos=[int], conectado=False):
+        self.id = id
         self.vecinos = vecinos
         self.conectado = conectado
         self.conteo += 1
+
+    def __str__(self):
+        print("{v_" + str(self.id) + "Vecinos: " + str(self.vecinos) + "Conectado: " + str(self.conectado) + "}")
 
 
 def lee_matriz():
@@ -33,8 +37,9 @@ def lee_matriz():
         for j in range(n):
             if i >= j:
                 if i == j:
-                    while M[i][j]%2 != 0:
-                        M[i][j] = int(input("Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                    while M[i][j] % 2 != 0:
+                        M[i][j] = int(input(
+                            "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
                 else:
                     M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
                 if i > j:
@@ -56,11 +61,36 @@ def dibuja_matriz(M):
 
 
 def elimina_bucles(M):
-    n=len(M)
+    """
+    Esta función elimina los bucles de una matriz de adyacencia
+    :params M: Matriz a la que se le eliminan las diagonales
+    """
+    n = len(M)
     for i in range(n):
         for j in range(n):
             if i == j:
                 M[i][j] = 0
+
+
+def crea_vértices(M):
+    """
+    Esta función crea los vértices de la matrás de adyacencia
+    :params M: Matriz de la que se extraen los vértices
+    """
+    n = len(M)
+    vértices = []
+    vecinos = []
+    vecinos_vj = []
+    for i in range(n):
+        for j in range(n):
+            if M[i][j] != 0:
+                vecinos_vj.append(j + 1)
+            print(i, j, vecinos_vj)
+        vecinos.append(vecinos_vj.copy())
+        vecinos_vj.clear()
+    print(vecinos)
+    for i in range(n):
+        vértices.append(Vértice(i + 1, vecinos[i], False))
 
 
 M = lee_matriz()
@@ -69,3 +99,5 @@ dibuja_matriz(M)
 elimina_bucles(M)
 print("Matriz sin loops")
 dibuja_matriz(M)
+print("Vértices")
+crea_vértices(M)
