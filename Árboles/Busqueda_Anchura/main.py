@@ -26,27 +26,6 @@ class Vértice:
         print("{v_" + str(self.id) + "Vecinos: " + str(self.vecinos) + "Conectado: " + str(self.conectado) + "}")
 
 
-def lee_matriz():
-    """
-    Esta función crea una matriz de adyacencia de un grafo solicitando las entradas a_{i,j} con i >= j.
-    :return: Matriz leída
-    """
-    n = int(input("Ingrese el número de vértices del grafo: "))
-    M = [[-1] * n for i in range(n)]
-    for i in range(n):
-        for j in range(n):
-            if i >= j:
-                if i == j:
-                    while M[i][j] % 2 != 0:
-                        M[i][j] = int(input(
-                            "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
-                else:
-                    M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
-                if i > j:
-                    M[j][i] = M[i][j]
-    return M
-
-
 def dibuja_matriz(M):
     """
     Esta función dibuja la matriz M
@@ -85,19 +64,56 @@ def crea_vértices(M):
         for j in range(n):
             if M[i][j] != 0:
                 vecinos_vj.append(j + 1)
-            print(i, j, vecinos_vj)
-        vecinos.append(vecinos_vj.copy())
+        vecinos.append(dict([("vecinos", vecinos_vj.copy())]))
         vecinos_vj.clear()
-    print(vecinos)
     for i in range(n):
-        vértices.append(Vértice(i + 1, vecinos[i], False))
+        vértices.append(dict([("vértice", i + 1), ("vecinos", vecinos[i]), ("conectado", False)]))
+    return vértices
+
+
+def lee_matriz():
+    """
+    Esta función crea una matriz de adyacencia de un grafo solicitando las entradas a_{i,j} con i >= j.
+    :return: Matriz leída
+    """
+    n = int(input("Ingrese el número de vértices del grafo: "))
+    M = [[-1] * n for i in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if i >= j:
+                if i == j:
+                    while M[i][j] % 2 != 0:
+                        M[i][j] = int(input(
+                            "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                else:
+                    M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                if i > j:
+                    M[j][i] = M[i][j]
+    dibuja_matriz(M)
+    elimina_bucles(M)
+    return M
+
+
+def generar_árbol_anchura(M):
+    n = len(M)
+    árbol_MA = [[0] * n for i in range(n)]
+    vértices = crea_vértices(M)
+    for i in range(n):
+        for j in vértices[i].get("vecinos").values():
+            for k in j:
+                if not vértices[k - 1].get("conectado"):
+                    if k - 1 >= i:
+                        árbol_MA[i][k - 1] += 1
+                        if k - 1 > i:
+                            árbol_MA[k - 1][i] = árbol_MA[i][k - 1]
+                    auctualización_estado = {"conectado": True}
+                    vértices[k - 1].update(auctualización_estado)
+                    print(vértices[k - 1])
+
+    dibuja_matriz(árbol_MA)
 
 
 M = lee_matriz()
-print("Matriz leida")
+print("Matriz leida sin loops")
 dibuja_matriz(M)
-elimina_bucles(M)
-print("Matriz sin loops")
-dibuja_matriz(M)
-print("Vértices")
-crea_vértices(M)
+generar_árbol_anchura(M)
