@@ -67,10 +67,20 @@ def lee_matriz():
             if i >= j:
                 if i == j:
                     while M[i][j] % 2 != 0:
-                        M[i][j] = int(input(
-                            "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                        while True:
+                            try:
+                                M[i][j] = int(input(
+                                    "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                                break
+                            except:
+                                print("¡No es un valor valido!")
                 else:
-                    M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                    while True:
+                        try:
+                            M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                            break
+                        except:
+                            print("¡No es un valor valido!")
                 if i > j:
                     M[j][i] = M[i][j]
     return M
