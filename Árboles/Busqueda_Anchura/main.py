@@ -8,29 +8,10 @@ Zamora Gutierrez Carlos David
 """
 
 
-class Vértice:
-    """
-    Este objeto, representa a los vértices del grafo,
-    tiene un arreglo de vértices vecinos y un booleano
-    que indica si está conectado o no.
-    """
-    conteo = 0
-
-    def __init__(self, id: int, vecinos=[int], conectado=False):
-        self.id = id
-        self.vecinos = vecinos
-        self.conectado = conectado
-        self.conteo += 1
-
-    def __str__(self):
-        print("{v_" + str(self.id) + "Vecinos: " + str(self.vecinos) + "Conectado: " + str(self.conectado) + "}")
-
-
 def dibuja_matriz(M):
     """
-    Esta función dibuja la matriz M
-    :param M: Matriz a dibujar
-    :return: Output
+    Esta función dibuja la matriz M.
+    :param M: Matriz a dibujar.
     """
     for i in range(len(M)):
         print('[', end='')
@@ -41,8 +22,8 @@ def dibuja_matriz(M):
 
 def elimina_bucles(M):
     """
-    Esta función elimina los bucles de una matriz de adyacencia
-    :params M: Matriz a la que se le eliminan las diagonales
+    Esta función elimina los bucles de una matriz de adyacencia.
+    :params M: Matriz a la que se le eliminan las diagonales.
     """
     n = len(M)
     for i in range(n):
@@ -53,8 +34,9 @@ def elimina_bucles(M):
 
 def crea_vértices(M):
     """
-    Esta función crea los vértices de la matrás de adyacencia
-    :params M: Matriz de la que se extraen los vértices
+    Esta función crea los vértices de la matrás de adyacencia.
+    :params M: Matriz de la que se extraen los vértices.
+    :return: Retorna una lista con los vértices en forma de diccionario.
     """
     n = len(M)
     vértices = []
@@ -73,7 +55,9 @@ def crea_vértices(M):
 
 def lee_matriz():
     """
-    Esta función crea una matriz de adyacencia de un grafo solicitando las entradas a_{i,j} con i >= j.
+    Esta función crea una matriz de adyacencia de un grafo.
+    Solicita el triángulo inferior de la matriz unión la diagonal
+    y luego copia los valores para hacerla simétrica.
     :return: Matriz leída
     """
     n = int(input("Ingrese el número de vértices del grafo: "))
@@ -89,12 +73,16 @@ def lee_matriz():
                     M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
                 if i > j:
                     M[j][i] = M[i][j]
-    dibuja_matriz(M)
-    elimina_bucles(M)
     return M
 
 
 def generar_árbol_anchura(M):
+    """
+    Esta función sigue el algoritmo de busqueda en anchura,
+    para crear la matriz de adyacencia de un árbol dada una matriz.
+    :params M: La matriz a la que se le quiere encontrar un árbol generador.
+    :return: retorna la matriz de adyacencia del árbol.
+    """
     n = len(M)
     árbol_MA = [[0] * n for i in range(n)]
     vértices = crea_vértices(M)
@@ -108,12 +96,15 @@ def generar_árbol_anchura(M):
                             árbol_MA[k - 1][i] = árbol_MA[i][k - 1]
                     auctualización_estado = {"conectado": True}
                     vértices[k - 1].update(auctualización_estado)
-                    print(vértices[k - 1])
-
-    dibuja_matriz(árbol_MA)
+    return árbol_MA
 
 
 M = lee_matriz()
-print("Matriz leida sin loops")
+print("Matriz ingresada")
 dibuja_matriz(M)
-generar_árbol_anchura(M)
+elimina_bucles(M)
+print("Matriz sin loops")
+dibuja_matriz(M)
+AM = generar_árbol_anchura(M)
+print("Matriz de adyacencia del árbol generado")
+dibuja_matriz(AM)
