@@ -1,0 +1,10 @@
+\section{Eliminación de bucles (loops)}
+La función \texttt{\textbf{elimina\_bucles(M)}} recorre una matriz \texttt{\textbf{M}} y le asigna el valor $0$ a las entradas \texttt{\textbf{m$_{i,i}$}}, entradas que representan bucles de longitud uno.
+\begin{lstlisting}[language=python, caption=Función elimina\_bucles(M)]
+def elimina_bucles(M):
+    n = len(M)
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                M[i][j] = 0
+\end{lstlisting}

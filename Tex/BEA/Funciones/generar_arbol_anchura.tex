@@ -1,0 +1,20 @@
+\section{Busqueda en anchura}
+La función \texttt{\textbf{generar\_arbol\_anchura(M)}} genera una matriz de adyacencia de un árbol generador dada una matriz \texttt{\textbf{M}}, a partir del algoritmo de busqueda por anchura.
+Esta función, al igual que la de entrada, genera una matriz triangular inferior recorriendo los vértices, conectando con sus vecinos (cambiando su estado) y posteriormente completa la matriz simétrica, retornando esta última.
+\begin{lstlisting}[language=python, caption=Función generar\_arbol\_anchura(M)]
+def generar_arbol_anchura(M):
+    n = len(M)
+    arbol_MA = [[0] * n for i in range(n)]
+    vertices = crea_vertices(M)
+    for i in range(n):
+        for j in vertices[i].get("vecinos").values():
+            for k in j:
+                if not vertices[k - 1].get("conectado"):
+                    if k - 1 >= i:
+                        arbol_MA[i][k - 1] += 1
+                        if k - 1 > i:
+                            arbol_MA[k - 1][i] = arbol_MA[i][k - 1]
+                    auctualizacion_estado = {"conectado": True}
+                    vertices[k - 1].update(auctualizacion_estado)
+    return arbol_MA
+\end{lstlisting}

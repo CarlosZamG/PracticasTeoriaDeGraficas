@@ -1,0 +1,18 @@
+\section{Vértices}
+La función \texttt{\textbf{crea\_vértices(M)}} recorre una matriz \texttt{\textbf{M}}, lista los vértices adyacentes y convierte las entradas \texttt{\textbf{m$_{i,j}$}} en un diccionario que contiene el número de vértice, vértices adyacentes y un estado que indica si está conectado o no, para listarlas y devolver la lista de los vértices.
+\begin{lstlisting}[language=python, caption=Función crea\_vértices(M)]
+def crea_vertices(M):
+    n = len(M)
+    vertices = []
+    vecinos = []
+    vecinos_vj = []
+    for i in range(n):
+        for j in range(n):
+            if M[i][j] != 0:
+                vecinos_vj.append(j + 1)
+        vecinos.append(dict([("vecinos", vecinos_vj.copy())]))
+        vecinos_vj.clear()
+    for i in range(n):
+        vertices.append(dict([("vertice", i + 1), ("vecinos", vecinos[i]), ("conectado", False)]))
+    return vertices
+\end{lstlisting}

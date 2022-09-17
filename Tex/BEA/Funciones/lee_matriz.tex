@@ -1,0 +1,29 @@
+\section{Entrada}
+La función \texttt{\textbf{lee\_matriz(M)}} solicita el número de vértices del grafo, lee una matriz triangular inferior ($n\times n$), es decir las entradas \texttt{\textbf{m$_{i,j}$ con $i\ge j$}}, donde las  entradas \texttt{\textbf{m$_{i,j}$ con $i=j$}} deben ser pares, pues la diagonal representa a los bucles (loops), y luego le asigna el valor de las entradas \texttt{\textbf{m$_{i,j}$}} a las entradas \texttt{\textbf{m$_{j,i}$}}, para asegurar que sea una matriz de adyacencia (debe ser simétrica). Retorna la matriz generada.
+\begin{lstlisting}[language=python, caption=Función lee\_matriz()]
+def lee_matriz():
+    n = int(input("Ingrese el numero de vertices del grafo: "))
+    M = [[-1] * n for i in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if i >= j:
+                if i == j:
+                    while M[i][j] % 2 != 0:
+                        while True:
+                            try:
+                                M[i][j] = int(input(
+                                    "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                                break
+                            except:
+                                print("No es un valor valido!")
+                else:
+                    while True:
+                        try:
+                            M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                            break
+                        except:
+                            print("No es un valor valido!")
+                if i > j:
+                    M[j][i] = M[i][j]
+    return M
+\end{lstlisting}
