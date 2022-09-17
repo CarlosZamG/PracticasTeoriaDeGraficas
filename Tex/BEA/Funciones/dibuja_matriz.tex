@@ -1,0 +1,8 @@
+\begin{lstlisting}[language=python, caption=Función dibuja\_matriz()]
+def dibuja_matriz(M):
+    for i in range(len(M)):
+        print('[', end='')
+        for j in range(len(M[i])):
+            print('{:^3n}'.format(M[i][j]), end='')
+        print(']')
+\end{lstlisting}
