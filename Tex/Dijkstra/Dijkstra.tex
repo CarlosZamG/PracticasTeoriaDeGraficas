@@ -369,69 +369,62 @@ destino.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{i }\OperatorTok{=} \DecValTok{1}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Elige el origen:"}\NormalTok{)}
+\NormalTok{i }\OperatorTok{=} \DecValTok{0}
 \ControlFlowTok{for}\NormalTok{ v }\KeywordTok{in}\NormalTok{ vertices:}
   \BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"}\SpecialCharTok{\{i\}}\SpecialStringTok{. }\SpecialCharTok{\{v\}}\SpecialStringTok{"}\NormalTok{)}
 \NormalTok{  i}\OperatorTok{+=}\DecValTok{1}
 
+\NormalTok{o }\OperatorTok{=} \BuiltInTok{int}\NormalTok{(}\BuiltInTok{input}\NormalTok{())}
 
-\ControlFlowTok{while} \VariableTok{True}\NormalTok{:}
-\NormalTok{  entrada }\OperatorTok{=} \BuiltInTok{input}\NormalTok{(}\StringTok{"Elige el origen:"}\NormalTok{)}
-  \ControlFlowTok{if}\NormalTok{ entrada.isdigit():}
-\NormalTok{    o }\OperatorTok{=} \BuiltInTok{int}\NormalTok{(entrada) }\OperatorTok{{-}} \DecValTok{1}  
-    \ControlFlowTok{if} \DecValTok{0} \OperatorTok{\textless{}=}\NormalTok{ o }\OperatorTok{\textless{}} \BuiltInTok{len}\NormalTok{(vertices):}
-      \ControlFlowTok{break}  
-
-\NormalTok{i }\OperatorTok{=} \DecValTok{1}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Elige el destino:"}\NormalTok{)}
+\NormalTok{i }\OperatorTok{=} \DecValTok{0}
 \ControlFlowTok{for}\NormalTok{ v }\KeywordTok{in}\NormalTok{ vertices:}
   \BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"}\SpecialCharTok{\{i\}}\SpecialStringTok{. }\SpecialCharTok{\{v\}}\SpecialStringTok{"}\NormalTok{)}
 \NormalTok{  i}\OperatorTok{+=}\DecValTok{1}
 
-\ControlFlowTok{while} \VariableTok{True}\NormalTok{:}
-\NormalTok{  entrada }\OperatorTok{=} \BuiltInTok{input}\NormalTok{(}\StringTok{"Elige el destino:"}\NormalTok{)}
-  \ControlFlowTok{if}\NormalTok{ entrada.isdigit():}
-\NormalTok{    d }\OperatorTok{=} \BuiltInTok{int}\NormalTok{(entrada) }\OperatorTok{{-}} \DecValTok{1}  
-    \ControlFlowTok{if} \DecValTok{0} \OperatorTok{\textless{}=}\NormalTok{ d }\OperatorTok{\textless{}} \BuiltInTok{len}\NormalTok{(vertices):}
-      \ControlFlowTok{break}  
-
-
-
+\NormalTok{d }\OperatorTok{=} \BuiltInTok{int}\NormalTok{(}\BuiltInTok{input}\NormalTok{())}
 \NormalTok{dijkstra(o,d)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-1. Buenavista
-2. Guerrero
-3. Garibaldi
-4. Lagunilla
-5. Hidalgo
-6. Bellas Artes
-7. San Cosme
-8. Revolucion
-9. Allende
-10. Zocalo
-11. Juarez
-12. Balderas
-13. San Juan de Letran
-14. Salto del agua
-15. Cuauhtemoc
-1. Buenavista
-2. Guerrero
-3. Garibaldi
-4. Lagunilla
-5. Hidalgo
-6. Bellas Artes
-7. San Cosme
-8. Revolucion
-9. Allende
-10. Zocalo
-11. Juarez
-12. Balderas
-13. San Juan de Letran
-14. Salto del agua
-15. Cuauhtemoc
-El camino más corto es: ['Lagunilla', 'Garibaldi', 'Guerrero', 'Hidalgo', 'Revolucion']
+Elige el origen:
+0. Buenavista
+1. Guerrero
+2. Garibaldi
+3. Lagunilla
+4. Hidalgo
+5. Bellas Artes
+6. San Cosme
+7. Revolucion
+8. Allende
+9. Zocalo
+10. Juarez
+11. Balderas
+12. San Juan de Letran
+13. Salto del agua
+14. Cuauhtemoc
+2
+Elige el destino:
+0. Buenavista
+1. Guerrero
+2. Garibaldi
+3. Lagunilla
+4. Hidalgo
+5. Bellas Artes
+6. San Cosme
+7. Revolucion
+8. Allende
+9. Zocalo
+10. Juarez
+11. Balderas
+12. San Juan de Letran
+13. Salto del agua
+14. Cuauhtemoc
+14
+El camino más corto es: ['Garibaldi', 'Bellas Artes', 'San Juan de Letran', 'Salto del agua', 'Balderas', 'Cuauhtemoc']
 \end{verbatim}
 
 \end{document}
+

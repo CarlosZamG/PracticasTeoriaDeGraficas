@@ -1,0 +1,10 @@
+\section{Impresión}
+Esta función  recorre una matriz e imprime las entradas en el medio de una cadena de longitud tres.
+\begin{lstlisting}[language=python, caption=Función dibuja\_matriz()]
+def dibuja_matriz(M):
+    for i in range(len(M)):
+        print('[', end='')
+        for j in range(len(M[i])):
+            print('{:^3n}'.format(M[i][j]), end='')
+        print(']')
+\end{lstlisting}
