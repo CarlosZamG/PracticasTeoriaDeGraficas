@@ -72,6 +72,10 @@ def lee_matriz():
 
 
 def valida_entradas(i:int, j:int, flag: bool) -> int:
+    """
+    Esta función valida las entradas de la matriz
+    :return: La entrada de la matriz_{i,j}
+    """
     resul: int = 1
     if flag:
         while resul % 2 != 0:
