@@ -63,15 +63,15 @@ def lee_matriz():
     for i in range(n):
         for j in range(i + 1):
             if i == j:
-                M[i][j] = valida_bucles(i, j, True)
+                M[i][j] = valida_entradas(i, j, True)
             else:
-                M[i][j] = valida_bucles(i, j, False)
+                M[i][j] = valida_entradas(i, j, False)
             if i > j:
                 M[j][i] = M[i][j]
     return M
 
 
-def valida_bucles(i, j, flag: bool) -> int:
+def valida_entradas(i:int, j:int, flag: bool) -> int:
     resul: int = 1
     if flag:
         while resul % 2 != 0:
