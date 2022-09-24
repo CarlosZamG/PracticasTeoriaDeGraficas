@@ -27,9 +27,7 @@ def elimina_bucles(M):
     """
     n = len(M)
     for i in range(n):
-        for j in range(n):
-            if i == j:
-                M[i][j] = 0
+        M[i][i] = 0
 
 
 def crea_vértices(M):
@@ -63,27 +61,35 @@ def lee_matriz():
     n = int(input("Ingrese el número de vértices del grafo: "))
     M = [[-1] * n for i in range(n)]
     for i in range(n):
-        for j in range(n):
-            if i >= j:
-                if i == j:
-                    while M[i][j] % 2 != 0:
-                        while True:
-                            try:
-                                M[i][j] = int(input(
-                                    "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
-                                break
-                            except:
-                                print("¡No es un valor valido!")
-                else:
-                    while True:
-                        try:
-                            M[i][j] = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
-                            break
-                        except:
-                            print("¡No es un valor valido!")
-                if i > j:
-                    M[j][i] = M[i][j]
+        for j in range(i + 1):
+            if i == j:
+                M[i][j] = valida_bucles(i, j, True)
+            else:
+                M[i][j] = valida_bucles(i, j, False)
+            if i > j:
+                M[j][i] = M[i][j]
     return M
+
+
+def valida_bucles(i, j, flag: bool) -> int:
+    resul: int = 1
+    if flag:
+        while resul % 2 != 0:
+            while True:
+                try:
+                    resul = int(input(
+                        "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                    break
+                except:
+                    print("¡No es un valor valido!")
+        return resul
+    else:
+        while True:
+            try:
+                resul = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                return resul
+            except:
+                print("¡No es un valor valido!")
 
 
 def generar_árbol_anchura(M):
