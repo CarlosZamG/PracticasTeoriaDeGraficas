@@ -4,7 +4,5 @@ La función \texttt{\textbf{elimina\_bucles(M)}} recorre una matriz \texttt{\tex
 def elimina_bucles(M):
     n = len(M)
     for i in range(n):
-        for j in range(n):
-            if i == j:
-                M[i][j] = 0
+        M[i][i] = 0
 \end{lstlisting}
