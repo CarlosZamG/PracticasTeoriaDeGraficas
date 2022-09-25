@@ -93,27 +93,25 @@ def valida_entradas(i:int, j:int, flag: bool) -> int:
 
 
 def generar_árbol_anchura(M):
-    """
-    Esta función sigue el algoritmo de busqueda en anchura,
-    para crear la matriz de adyacencia de un árbol dada una matriz.
-    :params M: La matriz a la que se le quiere encontrar un árbol generador.
-    :return: retorna la matriz de adyacencia del árbol.
-    """
+    conectados = [0]
     n = len(M)
-    árbol_MA = [[0] * n for i in range(n)]
-    vértices = crea_vértices(M)
-    for i in range(n):
-        for j in vértices[i].get("vecinos").values():
-            for k in j:
-                if not vértices[k - 1].get("conectado"):
-                    if k - 1 >= i:
-                        árbol_MA[i][k - 1] += 1
-                        if k - 1 > i:
-                            árbol_MA[k - 1][i] = árbol_MA[i][k - 1]
-                    auctualización_estado = {"conectado": True}
-                    vértices[k - 1].update(auctualización_estado)
-    return árbol_MA
-
+    MA = [[0 for i in range(n)] for i in range(n)]
+    #dibuja_matriz(MA)
+    while len(conectados) != n:
+      
+      for c in conectados:
+        idx=0
+        for i in M[c]:
+          if i != 0 and idx not in conectados:
+            conectados.append(idx)
+            #print(f"c:{c} index:{idx} ")
+            MA[c][idx] = 1
+            MA[idx][c] = 1
+            
+            #print(MA)
+          idx += 1 
+    #print(conectados) 
+    return MA
 
 M = lee_matriz()
 print("Matriz ingresada")
