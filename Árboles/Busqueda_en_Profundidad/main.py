@@ -95,29 +95,6 @@ def valida_entradas(i: int, j: int, flag: bool) -> int:
             except:
                 print("¡No es un valor valido!")
 
-
-def generar_árbol_anchura(M):
-    conectados = [0]
-    n = len(M)
-    MA = [[0 for i in range(n)] for i in range(n)]
-    # dibuja_matriz(MA)
-    while len(conectados) != n:
-
-        for c in conectados:
-            idx = 0
-            for i in M[c]:
-                if i != 0 and idx not in conectados:
-                    conectados.append(idx)
-                    # print(f"c:{c} index:{idx} ")
-                    MA[c][idx] = 1
-                    MA[idx][c] = 1
-
-                    # print(MA)
-                idx += 1
-                # print(conectados)
-    return MA
-
-
 def generar_árbol_profundidad(M):
     V = set()  # Conjunto de vértices ya conectados
     Vaux = set()  # Conjunto de vertices auxiliar
@@ -152,9 +129,6 @@ dibuja_matriz(M)
 elimina_bucles(M)
 print("Matriz sin loops")
 dibuja_matriz(M)
-AM = generar_árbol_anchura(M)
-print("Matriz de adyacencia del árbol generado por anchura")
-dibuja_matriz(AM)
 AM = generar_árbol_profundidad(M)
 print("Matriz de adyacencia del árbol generado por profundidad")
 dibuja_matriz(AM)
