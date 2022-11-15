@@ -44,7 +44,7 @@ def crea_vértices(M):
         for j in range(n):
             if M[i][j] != 0:
                 vecinos_vj.append(j + 1)
-        vecinos.append(dict([("vecinos", vecinos_vj.copy())]))
+        vecinos.append(vecinos_vj.copy())
         vecinos_vj.clear()
     for i in range(n):
         vértices.append(dict([("vértice", i + 1), ("vecinos", vecinos[i]), ("conectado", False)]))
