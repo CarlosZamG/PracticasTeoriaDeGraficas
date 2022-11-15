@@ -16,10 +16,10 @@ def lee_matriz():
 \end{lstlisting}
 \subsection{Validación}
 La función \texttt{\textbf{valida\_entrada(M)}} valida que los valores leídos sean numéricos y que las entradas de la diagonal sean números pares.
-\begin{lstlisting}[language=python, caption=Función valida\_entrada()]
-def valida_bucles(i, j, flag: bool) -> int:
+Así como que las opciones elegidas sean correctas.
+\begin{lstlisting}[language=python, caption=Función valida\_entrada()]def valida_entradas(i:int, j:int, flag: int) -> int:
     resul: int = 1
-    if flag:
+    if flag == 1:
         while resul % 2 != 0:
             while True:
                 try:
@@ -29,11 +29,33 @@ def valida_bucles(i, j, flag: bool) -> int:
                 except:
                     print("No es un valor valido!")
         return resul
-    else:
+    elif flag == 0:
         while True:
             try:
                 resul = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
                 return resul
+            except:
+                print("No es un valor valido!")
+    elif flag == 2:
+        while True:
+            try:
+                resul = int(input("Ingrese un numero 1 si desea aplicar busqueda en anchura y un 2 si desea aplicar busqueda en profundidad: "))
+                if 0<resul and resul<3:
+                    return resul
+                else:
+                    raise Exception("No es un valor valido!")
+            except:
+                print("No es un valor valido!")
+    elif flag == 3:
+        while True:
+            try:
+                resul = int(input("Ingrese un numero 1 si desea buscar otro arbol y un 2 si desea salir: "))
+                if resul == 1:
+                    return True
+                if resul == 2:
+                    return False
+                else:
+                    raise Exception("No es un valor valido!")
             except:
                 print("No es un valor valido!")
 \end{lstlisting}
