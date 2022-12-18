@@ -106,6 +106,32 @@ def circuito_euleriano(MA):
   
   return C + C_euler
 
+def grado(vertice):
+  return sum(vertice)
+
+def lista_grados(MA):
+  grados = []
+  for vertice in MA:
+    grados.append(grado(vertice))
+  return grados
+
+def verificadora (MA):
+  par = 0
+  impar = 0
+  grados = lista_grados(MA)
+  for d in grados:
+    if d%2 == 0:
+      par += 1
+    else:
+      impar += 1
+  #print(par, impar)
+  if impar == 0:
+    return 0 # Es euleriana
+  elif impar == 2:
+    return 1 # Es debilmente Euleriana
+  else:
+    return 2 # No es euleriana
+
 def run():
 
     print("Primera prueba:")
@@ -120,7 +146,14 @@ def run():
     [0,0,0,0,1,1,1,0,1],
     [0,0,0,0,0,1,0,1,0],
     ]
-    print(circuito_euleriano(MA))
+    eu = verificadora(MA)
+    if eu == 0:
+      print("La matriz es Euleriana")
+      print(circuito_euleriano(MA))
+    elif eu:
+      print("La matriz es debilmente Euleriana")
+    elif eu:
+      print("La matriz no es euleriana")
 
     n = 5 
 
@@ -129,7 +162,14 @@ def run():
     for i in range(n):
         M[i][i] = 0
     
-    print(circuito_euleriano(M))
+    eu = verificadora(M)
+    if eu == 0:
+      print("La matriz es Euleriana")
+      print(circuito_euleriano(M))
+    elif eu:
+      print("La matriz es debilmente Euleriana")
+    elif eu:
+      print("La matriz no es euleriana")
 
 if __name__=="__main__":
     run()
