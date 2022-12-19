@@ -135,7 +135,7 @@ def verificadora (MA):
 def run():
 
     print("Primera prueba:")
-    MA=[
+    ME=[
     [0,1,0,1,0,0,0,0,0],
     [1,0,1,1,1,0,0,0,0],
     [0,1,0,0,0,1,0,0,0],
@@ -146,30 +146,62 @@ def run():
     [0,0,0,0,1,1,1,0,1],
     [0,0,0,0,0,1,0,1,0],
     ]
-    eu = verificadora(MA)
+    eu = verificadora(ME)
     if eu == 0:
       print("La matriz es Euleriana")
-      print(circuito_euleriano(MA))
-    elif eu:
+      print(circuito_euleriano(ME))
+    elif eu == 1:
       print("La matriz es debilmente Euleriana")
-    elif eu:
+    else:
       print("La matriz no es euleriana")
 
     n = 5 
 
     print("Segunda prueba:")
-    M = [[1 for i in range(n)] for j in range(n)]
+    Kn = [[1 for i in range(n)] for j in range(n)]
     for i in range(n):
-        M[i][i] = 0
+        Kn[i][i] = 0
     
-    eu = verificadora(M)
+    eu = verificadora(Kn)
     if eu == 0:
       print("La matriz es Euleriana")
-      print(circuito_euleriano(M))
-    elif eu:
+      print(circuito_euleriano(Kn))
+    elif eu == 1:
       print("La matriz es debilmente Euleriana")
-    elif eu:
+    else:
       print("La matriz no es euleriana")
+
+    print("Tercera prueba:")
+    Tn = [[0 for i in range(n)] for j in range(n)]
+    for i in range(n-1):
+      Tn[i][i+1] = 1
+      Tn[i+1][i] = 1
+    
+    eu = verificadora(Tn)
+    if eu == 0:
+      print("La matriz es Euleriana")
+      print(circuito_euleriano(Tn))
+    elif eu == 1:
+      print("La matriz es debilmente Euleriana")
+    else:
+      print("La matriz no es euleriana")
+
+    n = 4 
+
+    print("Cuarta prueba:")
+    Kn = [[1 for i in range(n)] for j in range(n)]
+    for i in range(n):
+        Kn[i][i] = 0
+    
+    eu = verificadora(Kn)
+    if eu == 0:
+      print("La matriz es Euleriana")
+      print(circuito_euleriano(Kn))
+    elif eu == 1:
+      print("La matriz es debilmente Euleriana")
+    else:
+      print("La matriz no es euleriana")
+
 
 if __name__=="__main__":
     run()
