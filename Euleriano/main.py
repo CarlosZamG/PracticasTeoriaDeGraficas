@@ -115,19 +115,13 @@ def lista_grados(MA):
     grados.append(grado(vertice))
   return grados
 
-def verificadora (MA):
-  par = 0
-  impar = 0
+def verificadora(MA):
   grados = lista_grados(MA)
-  for d in grados:
-    if d%2 == 0:
-      par += 1
-    else:
-      impar += 1
-  #print(par, impar)
-  if impar == 0:
+  impares = list(filter(lambda x: x%2!=0, lista_grados(MA))) # enlista los grados impares
+  li = len(impares)
+  if li == 0:
     return 0 # Es euleriana
-  elif impar == 2:
+  elif li == 2:
     return 1 # Es debilmente Euleriana
   else:
     return 2 # No es euleriana
