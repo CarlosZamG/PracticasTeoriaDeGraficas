@@ -1,267 +1,312 @@
 import sys
 
-def simplificar_grafo(M):
-  n = len(M)
-  for i in range(n):
+def simplificar_grafo(M: list):
+    '''
+    Esta función simplica la gráfica con matriz de adyacencia M.
+
+    :param M: Matriz de adyacencia de la gráfica
+    '''
+    n: int = len(M)
+    for i in range(n):
         for j in range(i + 1):
             if i == j:
                 M[i][j] = 0
             elif M[i][j] != 0:
                 M[i][j] = 1
                 M[j][i] = 1
-            
 
+def eliminar_loops(M: list):
+    '''
+    Esta función elimina los loops de la gráfica con matriz de adyacencia M.
 
-def eliminar_loops(M):
-  n = len(M)
-  for i in range(n):
-    M[i][i] = 0
+    :param M: Matriz de adyacencia de la gráfica.
+    '''
+    n: int = len(M)
+    for i in range(n):
+        M[i][i] = 0
 
+def dijkstra(MA: list, origen: int, destino: int):
+    '''
+    Esta función determina el camino más corto en la gráfica con matriz de adyacencia MA entre el
+    origen y el destino.
 
-def dijkstra(MA,origen, destino):
-  """
-  Función modificada del Algoritmo de Dijkstra
+    :param MA: Matriz de adyacencia de la gráfica.
+    :param origen: Vértice de origen.
+    :param destino: Vértice de destino.
+    :return: Lista con los vértices del camino.
+    '''
+    vertices: list = list(range(len(MA)))
+    marcados: list = []
+    no_marcados: list = vertices.copy()
+    info_vertices: list = [{"v": v, "camino": [vertices[origen]], "tiempo": sys.maxsize} for v in vertices]
+    info_vertices[origen]["tiempo"] = 0
+    marcados.append(vertices[origen])
+    del no_marcados[vertices.index(marcados[-1])]
+    while vertices[destino] not in marcados:
+        act = marcados[-1]
+        for pos, j in enumerate(MA[act]):
+            if j != 0:
+                t = info_vertices[act]["tiempo"] + j
+                if info_vertices[pos]["tiempo"] > t:
+                    info_vertices[pos]["tiempo"] = t
+                    info_vertices[pos]["camino"] = info_vertices[act]["camino"].copy()
+                    info_vertices[pos]["camino"].append(vertices[pos])
+        minimo = sys.maxsize
+        for nm in no_marcados:
+            idx_nuevo = vertices.index(nm)
+            t = info_vertices[idx_nuevo]["tiempo"]
+            if t < minimo:
+                minimo = t
+                act = nm
+        marcados.append(act)
+        no_marcados.remove(act)
 
-  Recibe como parámetros:
-    - MA: La matriz de adyacencia de la gráfica
-    - origen: El índice en del vértice de origen en MA
-    - destino: El índice en del vértice de destino en MA
+    return info_vertices[destino]["camino"]
 
-  Retorna una lista con los índices de los vértices que forman el camino del vértice de origen al de destino 
-  """
-  vertices = list(range(len(MA)))
-  marcados = []
-  no_marcados = vertices.copy()
-  info_vertices=[ {"v": v ,"camino":[vertices[origen]], "tiempo":sys.maxsize} for v in vertices]
-  
-  info_vertices[origen]["tiempo"] = 0
-  marcados.append(vertices[origen])
-  del no_marcados[vertices.index(marcados[-1])]
+def c_euleriano_sin_loops(MA: list) -> list:
+    '''
+    Esta función determina el circuito euleriano de la gráfica con matriz de adyacencia MA eliminando loops.
 
-  
-  while vertices[destino] not in marcados:
-    act =  marcados[-1]
+    :param MA: Matriz de adyacencia de la gráfica.
+    :return: Lista con los vértices del circuito euleriano.
+    '''
 
-    for pos,j in enumerate(MA[act]):
-      if j != 0:
-        t = info_vertices[act]["tiempo"] + j
-        if info_vertices[pos]["tiempo"] > t:
-          info_vertices[pos]["tiempo"] = t
-          info_vertices[pos]["camino"] = info_vertices[act]["camino"].copy()
-          info_vertices[pos]["camino"].append(vertices[pos])
+    # Revisamos que la gráfica tenga aristas, en caso de que no haya aristas devuelve una lista vacía. Es nuestra base de la recursividad
+    sum_aristas: int = sum([sum(v) for v in MA])
+    if sum_aristas == 0:
+        return []
 
-    minimo = sys.maxsize
+    # Elegimos dos vértices adyacentes sobre los cuales vamos a construir el ciclo
+    for i, v in enumerate(MA):
+        grad = sum(v)
+        if grad > 0:
+            origen = i
+            for j, valor in enumerate(MA[i]):
+                if valor > 0:
+                    destino = j
+                    break
+            break
 
-    for nm in no_marcados:
-      idx_nuevo = vertices.index(nm)
-      t = info_vertices[idx_nuevo]["tiempo"]
-      if t < minimo:
-        minimo = t
-        act = nm
+    # Creamos una matriz provisional quitando una arista que une a nuestros vértices de origen y destino
+    MatProv: list = [f.copy() for f in MA]
+    MatProv[origen][destino] -= 1
+    MatProv[destino][origen] -= 1
+    simplificar_grafo(MatProv)
+    C: list = dijkstra(MatProv, origen, destino)
+    # Hacemos nuestro ciclo usando dijkstra y la matriz provisional
 
-    marcados.append(act)
-    no_marcados.remove(act)   
-  
-  return info_vertices[destino]["camino"]
+    # Creamos otra matriz provisional(MP2) a la que le quitamos las aristas del ciclo
+    MP2: list = [f.copy() for f in MA]
+    for i, v1 in enumerate(C):
+        j = (i + 1) % len(C)
+        v2 = C[j]
+        MP2[v1][v2] -= 1
+        MP2[v2][v1] -= 1
 
-def c_euleriano_sin_loops(MA):
-  """
-  Función que devuelve el circuito Euleriano de una gráfica sin loops
-  
-  Recibe como parámetros:
-    - MA: La matriz de adyacencia de la gráfica
+    # Creamos el circuito Euleriano de  MP2
+    C_euler: list = c_euleriano_sin_loops(MP2)
+    if len(C_euler) == 0:
+        return C
 
-  Devuelve una lista con los vértices que hay que ir uniendo para completar el ciclo
-  """
+    # Vemos el vértice en común de nuestros dos circuitos para poder unirlos
+    posC: int = 0
+    posCE: int = 0
+    for i, v in enumerate(C):
+        for j, v_e in enumerate(C_euler):
+            if v == v_e:
+                posC = i
+                posCE = j
+                break
+    C = C[posC:] + C[:posC]
+    C_euler = C_euler[posCE:] + C_euler[:posCE]
 
-  # Revisamos que la gráfica tenga aristas, en caso de que no haya aristas devuelve una lista vacía. Es nuestra base de la recursividad
-  sum_aristas = sum([sum(v) for v in MA]) 
-  if sum_aristas == 0:
-    return []
+    return C + C_euler
 
-  # Elegimos dos vértices adyacentes sobre los cuales vamos a construir el ciclo
-  for i,v in enumerate(MA):
-    grad = sum(v)
-    if grad > 0:
-      origen = i
-      for j,valor in enumerate(MA[i]):
-        if valor > 0:
-          destino = j
-          break
-      break
+def imprimir_trayectoria(T: list) -> None:
+    '''
+    Esta función imprime los vértices que hay que seguir para trazar la trayectoria T descrita sobre la gráfica.
 
-  # Creamos una matriz provisional quitando una arista que une a nuestros vértices de origen y destino   
-  MatProv = [f.copy() for f in MA]
-  MatProv[origen][destino] -= 1
-  MatProv[destino][origen] -= 1
-  simplificar_grafo(MatProv)
-  C = dijkstra(MatProv,origen,destino)
-  # Hacemos nuestro ciclo usando dijkstra y la matriz provisional 
+    :param T: Lista de vértices de la trayectoria.
+    :return: None
+    '''
+    n: int = len(T)
+    for i in range(n):
+        print(f"v{T[i] + 1} ->", end=" ") if i < n - 1 else print(f"v{T[i] + 1}")
 
-  # Creamos otra matriz provisional(MP2) a la que le quitamos las aristas del ciclo
-  MP2 = [f.copy() for f in MA]
-  for i,v1 in enumerate(C):
-    j = (i + 1) % len(C)
-    v2 = C[j]
-    MP2[v1][v2] -= 1
-    MP2[v2][v1] -= 1
+def circuito_euleriano(MA: list) -> list:
+    '''
+    Esta función determina el circuito euleriano de la gráfica con matriz de adyacencia MA.
 
-  # Creamos el circuito Euleriano de  MP2
-  C_euler = c_euleriano_sin_loops(MP2)
-  if len(C_euler) == 0:
-    return C
+    :param MA: Matriz de adyacencia de la gráfica.
+    :return: Lista con los vértices del circuito euleriano.
+    '''
+    n: int = len(MA)
+    MatProv: list = [f.copy() for f in MA]
+    eliminar_loops(MatProv)
+    c_euler: list = c_euleriano_sin_loops(MatProv)
+    for i in range(n):
+        v: int = MA[i][i] // 2
+        agregado: list = [i] * v
+        j: int = c_euler.index(i)
+        c_euler = c_euler[:j] + agregado + c_euler[j:]
+    return c_euler
 
-  # Vemos el vértice en común de nuestros dos circuitos para poder unirlos
-  posC = 0
-  posCE = 0
-  for i,v in enumerate(C):
-    for j, v_e in enumerate(C_euler):
-      if v == v_e:
-        posC = i
-        posCE = j
-        break 
-  C = C[posC:] + C[:posC]
-  C_euler = C_euler[posCE:] + C_euler[:posCE]
-  
-  return C + C_euler
+def camino_euleriano(MA: list, i: int, j: int) -> list:
+    '''
+    Esta función determina el camino euleriano de la gráfica con matriz de adyacencia MA con inicio i y fin j.
 
-def circuito_euleriano(MA):
-  n = len(MA) 
-  MatProv = [f.copy() for f in MA]
-  eliminar_loops(MatProv)
-  c_euler = c_euleriano_sin_loops(MatProv)
-  for i in range(n):
-    v = MA[i][i] // 2
-    agregado =  [i]*v
-    j = c_euler.index(i)
-    c_euler = c_euler[:j] + agregado + c_euler[j:]
+    :param MA: Matriz de adyacencia de la gráfica.
+    :param i: Índice de inicio.
+    :param j: Índice de fin.
+    :return: Lista con vértices del camino euleriano.
+    '''
+    MA[i][j] += 1
+    MA[j][i] += 1
+    T: list = []
+    C: list = circuito_euleriano(MA)
+    for n in range(1, len(C)):
+        if (C[n - 1] == j and C[n] == i) or (C[n - 1] == i and C[n] == j):
+            T = C[n:] + C[:n]
+    return T
 
-  return c_euler  
+def grado(vertice: list) -> int:
+    '''
+    Esta función determina el grado de un vértice de la gráfica.
 
-def trayectoria_euleriana(MA,i,j):
-  MA[i][j] += 1
-  MA[j][i] += 1
-  C = circuito_euleriano(MA)
-  for n in range(1,len(C)):
-    if (C[n-1] == j and  C[n] == i) or (C[n-1] == i and  C[n] == j):
-      T = C[n:] + C[:n]
+    :param vertice: Lista de adyacencia del vértice.
+    :return: Grado del vértice.
+    '''
+    return sum(vertice)
 
-  return T
+def lista_grados(MA: list) -> list:
+    '''
+    Esta función devuelve la lista de grados de una gráfica con matriz de adyacencia MA.
 
-def grado(vertice):
-  return sum(vertice)
+    :param MA: Matriz de adyacencia de la gráfica.
+    :return: Lista de grados de la gráfica.
+    '''
+    return list(map(sum, MA))
 
-def lista_grados(MA):
-  grados = []
-  for vertice in MA:
-    grados.append(grado(vertice))
-  return grados
+def filtrar_impares(tupla: tuple) -> int:
+    '''
+    Esta función determina los elementos impares de una lista.
 
-def filtrar_impares(tupla):
-  if tupla[1] % 2 != 0:
-    return tupla[0]
+    :param tupla: tupla de la forma (v,g) donde v es el índice del vértice y g es el grado 
+    :return: el  vértice impar.
+    '''
+    if tupla[1] % 2 != 0:
+        return tupla[0]
 
-def verificadora(MA):
-  
-  impares = list(map(filtrar_impares, list(enumerate(lista_grados(MA))))) 
-  impares = list(filter(lambda x:x!=None, impares))
-  
-  return impares
+def verificadora(MA: list) -> list:
+    '''
+    Esta función determina los vértices de grado impar de la gráfica con matriz de adyacencia MA.
 
-def testflow(MA):
-  impares = verificadora(MA)
-  eu = len(impares)
-  if eu == 0:
-    print("La matriz es Euleriana")
-    print(circuito_euleriano(MA))
-  elif eu == 2:
-    print("La matriz es debilmente Euleriana")
-    print(trayectoria_euleriana(MA,impares[0],impares[1]))
-  else:
-    print("La matriz no es euleriana")
+    :param MA: Matriz de adyacencia de la gráfica.
+    :return: Lista de vértices de grado impar de la gráfica.
+    '''
+    impares: list = list(map(filtrar_impares, list(enumerate(lista_grados(MA)))))
+    impares = list(filter(lambda x: x != None, impares))
+    return impares
 
+def testflow(MA: list) -> None:
+    '''
+    Esta función determina si la gráfica con matriz de adyacencia MA es euleriana, débilmente euleriana o ninguna.
+
+    :param MA: Matriz de adyacencia de la gráfica.
+    :return: None
+    '''
+    impares: list = verificadora(MA)
+    eu: int = len(impares)
+    if eu == 0:
+        print("La matriz es Euleriana")
+        C = circuito_euleriano(MA)
+        C = C + [C[0]]
+        imprimir_trayectoria(C)
+    elif eu == 2:
+        print("La matriz es débilmente Euleriana")
+        imprimir_trayectoria(camino_euleriano(MA, impares[0], impares[1]))
+    else:
+        print("La matriz no es euleriana")
 
 def run():
-
     print("\nPrimera prueba:")
-    ME=[
-    [0,1,0,1,0,0,0,0,0],
-    [1,0,1,1,1,0,0,0,0],
-    [0,1,0,0,0,1,0,0,0],
-    [1,1,0,0,1,0,1,0,0],
-    [0,1,0,1,0,1,0,1,0],
-    [0,0,1,0,1,0,0,1,1],
-    [0,0,0,1,0,0,0,1,0],
-    [0,0,0,0,1,1,1,0,1],
-    [0,0,0,0,0,1,0,1,0],
+    ME = [
+        [0, 1, 0, 1, 0, 0, 0, 0, 0],
+        [1, 0, 1, 1, 1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 1, 0, 0, 0],
+        [1, 1, 0, 0, 1, 0, 1, 0, 0],
+        [0, 1, 0, 1, 0, 1, 0, 1, 0],
+        [0, 0, 1, 0, 1, 0, 0, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0, 1, 0],
     ]
-    
-    testflow(ME) 
+
+    testflow(ME)
 
     print("\nSegunda prueba:")
     n = 5
     Kn = [[1 for i in range(n)] for j in range(n)]
     for i in range(n):
         Kn[i][i] = 0
-    
+
     testflow(Kn)
 
     print("\nTercera prueba:")
     Tn = [[0 for i in range(n)] for j in range(n)]
-    for i in range(n-1):
-      Tn[i][i+1] = 1
-      Tn[i+1][i] = 1
-    
-    testflow(Tn) 
+    for i in range(n - 1):
+        Tn[i][i + 1] = 1
+        Tn[i + 1][i] = 1
+
+    testflow(Tn)
 
     print("\nCuarta prueba:")
     n = 4
     Kn = [[1 for i in range(n)] for j in range(n)]
     for i in range(n):
         Kn[i][i] = 0
-    
+
     testflow(Kn)
 
-  
     print("\nQuinta prueba:")
     ME = [
-          [0,1,0,0,3],
-          [1,0,2,0,1],
-          [0,2,0,1,1],
-          [0,0,1,0,1],
-          [3,1,1,1,0],
-          ]
+        [0, 1, 0, 0, 3],
+        [1, 0, 2, 0, 1],
+        [0, 2, 0, 1, 1],
+        [0, 0, 1, 0, 1],
+        [3, 1, 1, 1, 0],
+    ]
     testflow(ME)
 
     print("\nSexta prueba")
     ME = [
-        [0,2,0,0,0,2],
-        [2,0,2,0,0,0],
-        [0,2,0,2,0,0],
-        [0,0,2,0,2,0],
-        [0,0,0,2,0,2],
-        [2,0,0,0,2,0],
-        ]
+        [0, 2, 0, 0, 0, 2],
+        [2, 0, 2, 0, 0, 0],
+        [0, 2, 0, 2, 0, 0],
+        [0, 0, 2, 0, 2, 0],
+        [0, 0, 0, 2, 0, 2],
+        [2, 0, 0, 0, 2, 0],
+    ]
 
     testflow(ME)
 
     print("\n7ma prueba")
     ME = [
-          [2,2],
-          [2,0]
-          ]
-    
+        [2, 2],
+        [2, 0]
+    ]
+
     testflow(ME)
 
     print("\n8va prueba")
-    MD = [[0,1,0,1,1],
-          [1,0,1,0,2],
-          [0,1,0,1,1],
-          [1,0,1,0,2],
-          [1,2,1,2,0],]
+    MD = [[0, 1, 0, 1, 1],
+          [1, 0, 1, 0, 2],
+          [0, 1, 0, 1, 1],
+          [1, 0, 1, 0, 2],
+          [1, 2, 1, 2, 0], ]
 
     testflow(MD)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     run()
