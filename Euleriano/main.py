@@ -1,5 +1,23 @@
 import sys
 
+def simplificar_grafo(M):
+  n = len(M)
+  for i in range(n):
+        for j in range(i + 1):
+            if i == j:
+                M[i][j] = 0
+            elif M[i][j] != 0:
+                M[i][j] = 1
+                M[j][i] = 1
+            
+
+
+def eliminar_loops(M):
+  n = len(M)
+  for i in range(n):
+    M[i][i] = 0
+
+
 def dijkstra(MA,origen, destino):
   """
   Función modificada del Algoritmo de Dijkstra
@@ -46,9 +64,9 @@ def dijkstra(MA,origen, destino):
   
   return info_vertices[destino]["camino"]
 
-def circuito_euleriano(MA):
+def c_euleriano_sin_loops(MA):
   """
-  Función que devuelve el circuito Euleriano de una gráfica
+  Función que devuelve el circuito Euleriano de una gráfica sin loops
   
   Recibe como parámetros:
     - MA: La matriz de adyacencia de la gráfica
@@ -76,6 +94,7 @@ def circuito_euleriano(MA):
   MatProv = [f.copy() for f in MA]
   MatProv[origen][destino] -= 1
   MatProv[destino][origen] -= 1
+  simplificar_grafo(MatProv)
   C = dijkstra(MatProv,origen,destino)
   # Hacemos nuestro ciclo usando dijkstra y la matriz provisional 
 
@@ -88,7 +107,7 @@ def circuito_euleriano(MA):
     MP2[v2][v1] -= 1
 
   # Creamos el circuito Euleriano de  MP2
-  C_euler = circuito_euleriano(MP2)
+  C_euler = c_euleriano_sin_loops(MP2)
   if len(C_euler) == 0:
     return C
 
@@ -106,6 +125,29 @@ def circuito_euleriano(MA):
   
   return C + C_euler
 
+def circuito_euleriano(MA):
+  n = len(MA) 
+  MatProv = [f.copy() for f in MA]
+  eliminar_loops(MatProv)
+  c_euler = c_euleriano_sin_loops(MatProv)
+  for i in range(n):
+    v = MA[i][i] // 2
+    agregado =  [i]*v
+    j = c_euler.index(i)
+    c_euler = c_euler[:j] + agregado + c_euler[j:]
+
+  return c_euler  
+
+def trayectoria_euleriana(MA,i,j):
+  MA[i][j] += 1
+  MA[j][i] += 1
+  C = circuito_euleriano(MA)
+  for n in range(1,len(C)):
+    if (C[n-1] == j and  C[n] == i) or (C[n-1] == i and  C[n] == j):
+      T = C[n:] + C[:n]
+
+  return T
+
 def grado(vertice):
   return sum(vertice)
 
@@ -115,20 +157,33 @@ def lista_grados(MA):
     grados.append(grado(vertice))
   return grados
 
+def filtrar_impares(tupla):
+  if tupla[1] % 2 != 0:
+    return tupla[0]
+
 def verificadora(MA):
-  grados = lista_grados(MA)
-  impares = list(filter(lambda x: x%2!=0, lista_grados(MA))) # enlista los grados impares
-  li = len(impares)
-  if li == 0:
-    return 0 # Es euleriana
-  elif li == 2:
-    return 1 # Es debilmente Euleriana
+  
+  impares = list(map(filtrar_impares, list(enumerate(lista_grados(MA))))) 
+  impares = list(filter(lambda x:x!=None, impares))
+  
+  return impares
+
+def testflow(MA):
+  impares = verificadora(MA)
+  eu = len(impares)
+  if eu == 0:
+    print("La matriz es Euleriana")
+    print(circuito_euleriano(MA))
+  elif eu == 2:
+    print("La matriz es debilmente Euleriana")
+    print(trayectoria_euleriana(MA,impares[0],impares[1]))
   else:
-    return 2 # No es euleriana
+    print("La matriz no es euleriana")
+
 
 def run():
 
-    print("Primera prueba:")
+    print("\nPrimera prueba:")
     ME=[
     [0,1,0,1,0,0,0,0,0],
     [1,0,1,1,1,0,0,0,0],
@@ -140,61 +195,72 @@ def run():
     [0,0,0,0,1,1,1,0,1],
     [0,0,0,0,0,1,0,1,0],
     ]
-    eu = verificadora(ME)
-    if eu == 0:
-      print("La matriz es Euleriana")
-      print(circuito_euleriano(ME))
-    elif eu == 1:
-      print("La matriz es debilmente Euleriana")
-    else:
-      print("La matriz no es euleriana")
+    
+    testflow(ME) 
 
-    n = 5 
-
-    print("Segunda prueba:")
+    print("\nSegunda prueba:")
+    n = 5
     Kn = [[1 for i in range(n)] for j in range(n)]
     for i in range(n):
         Kn[i][i] = 0
     
-    eu = verificadora(Kn)
-    if eu == 0:
-      print("La matriz es Euleriana")
-      print(circuito_euleriano(Kn))
-    elif eu == 1:
-      print("La matriz es debilmente Euleriana")
-    else:
-      print("La matriz no es euleriana")
+    testflow(Kn)
 
-    print("Tercera prueba:")
+    print("\nTercera prueba:")
     Tn = [[0 for i in range(n)] for j in range(n)]
     for i in range(n-1):
       Tn[i][i+1] = 1
       Tn[i+1][i] = 1
     
-    eu = verificadora(Tn)
-    if eu == 0:
-      print("La matriz es Euleriana")
-      print(circuito_euleriano(Tn))
-    elif eu == 1:
-      print("La matriz es debilmente Euleriana")
-    else:
-      print("La matriz no es euleriana")
+    testflow(Tn) 
 
-    n = 4 
-
-    print("Cuarta prueba:")
+    print("\nCuarta prueba:")
+    n = 4
     Kn = [[1 for i in range(n)] for j in range(n)]
     for i in range(n):
         Kn[i][i] = 0
     
-    eu = verificadora(Kn)
-    if eu == 0:
-      print("La matriz es Euleriana")
-      print(circuito_euleriano(Kn))
-    elif eu == 1:
-      print("La matriz es debilmente Euleriana")
-    else:
-      print("La matriz no es euleriana")
+    testflow(Kn)
+
+  
+    print("\nQuinta prueba:")
+    ME = [
+          [0,1,0,0,3],
+          [1,0,2,0,1],
+          [0,2,0,1,1],
+          [0,0,1,0,1],
+          [3,1,1,1,0],
+          ]
+    testflow(ME)
+
+    print("\nSexta prueba")
+    ME = [
+        [0,2,0,0,0,2],
+        [2,0,2,0,0,0],
+        [0,2,0,2,0,0],
+        [0,0,2,0,2,0],
+        [0,0,0,2,0,2],
+        [2,0,0,0,2,0],
+        ]
+
+    testflow(ME)
+
+    print("\n7ma prueba")
+    ME = [
+          [2,2],
+          [2,0]
+          ]
+    
+    testflow(ME)
+
+    print("\n8va prueba")
+    MD = [[0,1,0,1,1],
+          [1,0,1,0,2],
+          [0,1,0,1,1],
+          [1,0,1,0,2],
+          [1,2,1,2,0],]
+
+    testflow(MD)
 
 
 if __name__=="__main__":
