@@ -208,7 +208,69 @@ def verificadora(MA: list) -> list:
     impares = list(filter(lambda x: x != None, impares))
     return impares
 
-def testflow(MA: list) -> None:
+def lee_matriz():
+    """
+    Esta función crea una matriz de adyacencia de un grafo.
+    Solicita el triángulo inferior de la matriz unión la diagonal
+    y luego copia los valores para hacerla simétrica.
+    :return: Matriz leída
+    """
+    n = int(input("Ingrese el número de vértices del grafo: "))
+    M = [[-1] * n for i in range(n)]
+    for i in range(n):
+        for j in range(i + 1):
+            if i == j:
+                M[i][j] = valida_entradas(i, j, 1)
+            else:
+                M[i][j] = valida_entradas(i, j, 0)
+            if i > j:
+                M[j][i] = M[i][j]
+    return M
+
+def valida_entradas(i:int, j:int, flag: int) -> int:
+    resul: int = 1
+    if flag == 1:
+        while resul % 2 != 0:
+            while True:
+                try:
+                    resul = int(input(
+                        "Ingrese la entrada M[{0}][{1}] (Esta debe ser par): ".format(str(i + 1), str(j + 1))))
+                    break
+                except:
+                    print("¡No es un valor valido!")
+        return resul
+    elif flag == 0:
+        while True:
+            try:
+                resul = int(input("Ingrese la entrada M[{0}][{1}]: ".format(str(i + 1), str(j + 1))))
+                return resul
+            except:
+                print("¡No es un valor valido!")
+    elif flag == 2:
+        while True:
+            try:
+                resul = int(input("Ingrese un número 1 si desea aplicar busqueda en anchura y un 2 si desea aplicar busqueda en profundidad: "))
+                if 0<resul and resul<3:
+                    return resul
+                else:
+                    raise Exception("¡No es un valor valido!")
+            except:
+                print("¡No es un valor valido!")
+    elif flag == 3:
+        while True:
+            try:
+                resul = int(input("Ingrese un número 1 si desea buscar otro árbol y un 2 si desea salir: "))
+                if resul == 1:
+                    return True
+                if resul == 2:
+                    return False
+                else:
+                    raise Exception("¡No es un valor valido!")
+            except:
+                print("¡No es un valor valido!")
+
+
+def mainflow(MA: list) -> None:
     '''
     Esta función determina si la gráfica con matriz de adyacencia MA es euleriana, débilmente euleriana o ninguna.
 
@@ -226,9 +288,14 @@ def testflow(MA: list) -> None:
         print("La matriz es débilmente Euleriana")
         imprimir_trayectoria(camino_euleriano(MA, impares[0], impares[1]))
     else:
-        print("La matriz no es euleriana")
+        print("La matriz no es Euleriana, ni débilmente Euleriana")
 
-def run():
+
+def test() -> None:
+    '''
+    Función para probar mainflow()
+    :return: None
+    '''
     print("\nPrimera prueba:")
     ME = [
         [0, 1, 0, 1, 0, 0, 0, 0, 0],
@@ -242,7 +309,7 @@ def run():
         [0, 0, 0, 0, 0, 1, 0, 1, 0],
     ]
 
-    testflow(ME)
+    mainflow(ME)
 
     print("\nSegunda prueba:")
     n = 5
@@ -250,7 +317,7 @@ def run():
     for i in range(n):
         Kn[i][i] = 0
 
-    testflow(Kn)
+    mainflow(Kn)
 
     print("\nTercera prueba:")
     Tn = [[0 for i in range(n)] for j in range(n)]
@@ -258,7 +325,7 @@ def run():
         Tn[i][i + 1] = 1
         Tn[i + 1][i] = 1
 
-    testflow(Tn)
+    mainflow(Tn)
 
     print("\nCuarta prueba:")
     n = 4
@@ -266,7 +333,7 @@ def run():
     for i in range(n):
         Kn[i][i] = 0
 
-    testflow(Kn)
+    mainflow(Kn)
 
     print("\nQuinta prueba:")
     ME = [
@@ -276,7 +343,7 @@ def run():
         [0, 0, 1, 0, 1],
         [3, 1, 1, 1, 0],
     ]
-    testflow(ME)
+    mainflow(ME)
 
     print("\nSexta prueba")
     ME = [
@@ -288,7 +355,7 @@ def run():
         [2, 0, 0, 0, 2, 0],
     ]
 
-    testflow(ME)
+    mainflow(ME)
 
     print("\n7ma prueba")
     ME = [
@@ -296,7 +363,7 @@ def run():
         [2, 0]
     ]
 
-    testflow(ME)
+    mainflow(ME)
 
     print("\n8va prueba")
     MD = [[0, 1, 0, 1, 1],
@@ -305,8 +372,8 @@ def run():
           [1, 0, 1, 0, 2],
           [1, 2, 1, 2, 0], ]
 
-    testflow(MD)
-
+    mainflow(MD)
 
 if __name__ == "__main__":
-    run()
+    M = lee_matriz()
+    mainflow(M)
