@@ -154,5 +154,5 @@ if __name__ == "__main__":
     m = len(set(dict_col.values()))
     M = np.array([np.array(v) for v in M])
     lc = colores_aleatorios(len(M))
-    print(empareja_colores(dict_col, lc))
+    print("Aristas:",generador_aristas(M),"\nVértices:",generador_vertices(M),"\nColoración:",empareja_colores(dict_col, lc))
     dibuja_grafo(generador_aristas(M),generador_vertices(M),empareja_colores(dict_col, lc))
